@@ -18,9 +18,9 @@ $die2 = "
 scitools barnyard-compare [options] [sorted rmdup filtered bam file]
 
 Generates a human vs mouse barnyard comparison file & stats.
-Reference must have _h or _m at the end of chromosome names to indicate species.
+Reference must have GRCh38_ or GRCm39_ at the start of chromosome names to indicate species.
 
-Will exclude /(M|Y|L|K|G|Un|Random|Alt)/ chroms
+Will exclude /_(M|Y|L|K|G|Un|Random|Alt)/ chroms
 
 Options:
    -O   [STR]   Output prefix (default is bam file prefix)
@@ -48,11 +48,11 @@ while ($l = <IN>) {
 		$BARC_human{$barc} = 0;
 		$BARC_mouse{$barc} = 0;
 	}
-	if ($P[2] !~ /(M|Y|L|K|G|Un|un|random|alt|Random|Alt)/) {
-		if ($P[2] =~ /_h$/) {
+	if ($P[2] !~ /_(M|Y|L|K|G|Un|un|random|alt|Random|Alt)/) {
+		if ($P[2] =~ /^GRCh38_/) {
 			$BARC_total{$barc}++;
 			$BARC_human{$barc}++;
-		} elsif ($P[2] =~ /_m$/) {
+		} elsif ($P[2] =~ /^GRCm39_/) {
 			$BARC_total{$barc}++;
 			$BARC_mouse{$barc}++;
 		}
