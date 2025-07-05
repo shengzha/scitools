@@ -11,7 +11,8 @@ sub barnyard_compare {
 getopts("O:q:n:f:s:", \%opt);
 
 $mapQ = 20;
-$minR = 1000;
+# $minR = 1000;
+$minR = 1;
 $maxF = 0.1;
 
 $die2 = "
@@ -86,17 +87,17 @@ foreach $barc (sort {$BARC_total{$b}<=>$BARC_total{$a}} keys %BARC_total) {
 	}
 } close OUT;
 
-open OUT, ">$opt{'O'}.barnyard_stats.txt";
-$frac_mix = sprintf("%.2f", $mix_cells/$total_cells);
-$est_total_collision = $frac_mix*2;
-print OUT "Barnyard stats for $ARGV[0]
-Total cells with $minR reads: $total_cells
-Cells called as human: $human_cells
-Cells called as mouse: $mouse_cells
-Cells with > $maxF from other species: $mix_cells ($frac_mix)
-Estimated total collision (mix fraction * 2): $est_total_collision
-";
-close OUT;
+# open OUT, ">$opt{'O'}.barnyard_stats.txt";
+# $frac_mix = sprintf("%.2f", $mix_cells/$total_cells);
+# $est_total_collision = $frac_mix*2;
+# print OUT "Barnyard stats for $ARGV[0]
+# Total cells with $minR reads: $total_cells
+# Cells called as human: $human_cells
+# Cells called as mouse: $mouse_cells
+# Cells with > $maxF from other species: $mix_cells ($frac_mix)
+# Estimated total collision (mix fraction * 2): $est_total_collision
+# ";
+# close OUT;
 
 }
 1;
