@@ -66,7 +66,7 @@ $total_cells = 0;
 $human_cells = 0;
 $mouse_cells = 0;
 
-open OUT, ">$opt{'O'}.barnyard_cells.txt";
+open OUT, ">$opt{'O'}.barnyard.q${mapQ}.txt";
 foreach $barc (sort {$BARC_total{$b}<=>$BARC_total{$a}} keys %BARC_total) {
 	if ($BARC_total{$barc} >= $minR) {
 		$frac_h = sprintf("%.2f", $BARC_human{$barc}/$BARC_total{$barc});
