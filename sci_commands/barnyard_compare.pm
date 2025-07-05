@@ -14,6 +14,7 @@ $mapQ = 20;
 # $minR = 1000;
 $minR = 1;
 $maxF = 0.1;
+$in_threads = 1;
 
 $die2 = "
 scitools barnyard-compare [options] [sorted rmdup filtered bam file]
@@ -28,18 +29,18 @@ Options:
    -q   [INT]   Mapping quality filter (def = $mapQ)
    -n   [INT]   Min number of reads to consider cell (def = $minR)
    -f   [FLT]   Max fraction of other species to be considered pure (def = $maxF)
-   -s   [STR]   Samtools call (def = $samtools)
+   -T   [INT]   Threads for the bam file read-in. (def = $in_threads)
 
 ";
 
 if (!defined $ARGV[0]) {die $die2};
 if (!defined $opt{'O'}) {$opt{'O'} = $ARGV[0]; $opt{'O'} =~ s/\.bam$//};
-if (defined $opt{'s'}) {$samtools = $opt{'s'}};
 if (defined $opt{'n'}) {$minR = $opt{'n'}};
 if (defined $opt{'q'}) {$mapQ = $opt{'q'}};
 if (defined $opt{'f'}) {$maxF = $opt{'f'}};
+if (defined $opt{'T'}) {$in_threads = $opt{'T'}};
 
-open IN, "$samtools view -q $mapQ $ARGV[0] |";
+open IN, "$samtools view -@ $in_threads -q $mapQ $ARGV[0] |";
 while ($l = <IN>) {
 	chomp $l;
 	@P = split(/\t/, $l);
