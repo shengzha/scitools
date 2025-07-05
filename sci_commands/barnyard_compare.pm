@@ -8,7 +8,7 @@ use Exporter "import";
 sub barnyard_compare {
 
 @ARGV = @_;
-getopts("O:q:n:f:s:", \%opt);
+getopts("O:q:n:f:T:", \%opt);
 
 $mapQ = 20;
 # $minR = 1000;
