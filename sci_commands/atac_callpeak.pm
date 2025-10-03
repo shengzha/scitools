@@ -12,7 +12,7 @@ sub atac_callpeak {
 # Defaults:
 $min_feature_size = 500;
 
-getopts("s:m:b:O:l:f:Xe", \%opt);
+getopts("m:b:O:l:f:Xe", \%opt);
 
 $die2 = "
 scitools atac-callpeak [options] [duplicate removed and filtered bam file]
@@ -23,7 +23,6 @@ Options:
    -l   [INT]   Minimum feature size (def = $min_feature_size);
    -b   [STR]   Bedtools call (def = $bedtools)
    -m   [STR]   Macs2 call (def = $macs2)
-   -s   [STR]   Samtools call (def = $samtools)
    -f   [STR]   Fai file for chr lengths (shorcut examples: hg19, hg38, and mm10 if in .cfg)
                 If toggled will ensure n peaks extend beyond
    -e 			If toggled, will not filter chromosomes by standard filter pattern (i.e.(M|Y|L|K|G|Un|Random|Alt))
@@ -34,7 +33,6 @@ Options:
 if (!defined $ARGV[0]) {die $die2};
 if (!defined $opt{'O'}) {$opt{'O'} = $ARGV[0]; $opt{'O'} =~ s/\.bam$//};
 if (defined $opt{'l'}) {$min_feature_size = $opt{'l'}};
-if (defined $opt{'s'}) {$samtools = $opt{'s'}};
 
 if (defined $opt{'f'}) {
 	if (defined $REF{$opt{'f'}}) {
@@ -49,7 +47,12 @@ if (defined $opt{'f'}) {
 	} close FAI;
 }
 
-system("$macs2 callpeak --keep-dup all -t $ARGV[0] -n $opt{'O'} >> $opt{'O'}.macs2.log 2>> $opt{'O'}.macs2.log");
+if (-e "$opt{'O'}_peaks.narrowPeak") { 
+	print STDERR "$opt{'O'}_peaks.narrowPeak exists!\n";
+} else {
+	print STDERR "Generating $opt{'O'}_peaks.narrowPeak ...\n";
+	system("$macs2 callpeak --keep-dup all -t $ARGV[0] -n $opt{'O'} >> $opt{'O'}.macs2.log 2>> $opt{'O'}.macs2.log");
+}
 
 open IN, "$bedtools merge -i $opt{'O'}_peaks.narrowPeak 2>/dev/null |";
 open OUT, "| $bedtools sort -i - 2>/dev/null | $bedtools merge -i - > $opt{'O'}.$min_feature_size.tmp 2>/dev/null";
@@ -57,7 +60,7 @@ open OUT, "| $bedtools sort -i - 2>/dev/null | $bedtools merge -i - > $opt{'O'}.
 while ($l = <IN>) {
 	chomp $l;
 	@P = split(/\t/, $l);
-	if (defined $opt{'e'} || $P[2] !~ /(M|Y|L|K|G|Un|Random|Alt)/i) {
+	if (defined $opt{'e'} || $P[0] !~ /(M|Y|L|K|G|Un|Random|Alt)/i) {
 		if (($P[2]-$P[1])<$min_feature_size) {
 			$mid = ($P[2]+$P[1])/2;
 			$start = int($mid-($min_feature_size/2));
